@@ -143,11 +143,11 @@ loop do
         AwsCleaner.new.delete_message(id, @config)
         next
       end
-
       instance_id = AwsCleaner.new.process_message(body)
 
       if instance_id
         chef_node = AwsCleaner::Chef.get_chef_node_name(instance_id, @config)
+
         webhook(id, instance_id)
         chef(id, instance_id, chef_node)
         sensu(id, instance_id, chef_node)

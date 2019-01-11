@@ -1,10 +1,18 @@
+require 'aws-sdk-sqs'
+
 # main aws_cleaner lib
 class AwsCleaner
   # SQS related stuff
   module SQS
     # sqs connection
     def self.client(config)
-      Aws::SQS::Client.new(config[:aws])
+      Aws.config[:credentials] = Aws::Credentials.new(config[:aws][:aws_access_key], config[:aws][:aws_secret_access_key]) if config[:aws][:aws_access_key] && config[:aws][:aws_secret_access_key]
+
+      Aws.config.update( # rubocop:disable Style/MultilineIfModifier
+        region: config[:aws][:aws_region]
+      ) if config[:aws].key?(:aws_region)
+
+      Aws::SQS::Client.new()
     end
   end
 
@@ -29,8 +37,11 @@ class AwsCleaner
 
     # call the Chef API to get the node name of the instance
     def self.get_chef_node_name(instance_id, config)
+      puts "chef0"
       chef = client(config)
+      puts "chef1"
       results = chef.search.query(:node, "ec2_instance_id:#{instance_id} OR chef_provisioning_reference_server_id:#{instance_id}")
+      puts "chef2"
       return false if results.rows.empty?
       results.rows.first['name']
     end
