@@ -37,11 +37,8 @@ class AwsCleaner
 
     # call the Chef API to get the node name of the instance
     def self.get_chef_node_name(instance_id, config)
-      puts "chef0"
       chef = client(config)
-      puts "chef1"
       results = chef.search.query(:node, "ec2_instance_id:#{instance_id} OR chef_provisioning_reference_server_id:#{instance_id}")
-      puts "chef2"
       return false if results.rows.empty?
       results.rows.first['name']
     end
