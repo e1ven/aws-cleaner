@@ -128,7 +128,7 @@ loop do
     # get messages from SQS
     messages = @sqs_client.receive_message(
       queue_url: @config[:sqs][:queue],
-      max_number_of_messages: 10,
+      max_number_of_messages: 100,
       visibility_timeout: 3
     ).messages
 
@@ -157,6 +157,7 @@ loop do
       end
     end
 
+    break if messages.empty?
     sleep(5)
   rescue Interrupt
     closelog('Received Interrupt signal. Quit aws-cleaner')

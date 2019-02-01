@@ -38,7 +38,7 @@ class AwsCleaner
     # call the Chef API to get the node name of the instance
     def self.get_chef_node_name(instance_id, config)
       chef = client(config)
-      results = chef.search.query(:node, "ec2_instance_id:#{instance_id} OR chef_provisioning_reference_server_id:#{instance_id}")
+      results = chef.search.query(:node, "instance_id:#{instance_id} OR chef_provisioning_reference_server_id:#{instance_id}")
       return false if results.rows.empty?
       results.rows.first['name']
     end
@@ -46,7 +46,7 @@ class AwsCleaner
     # call the Chef API to get the FQDN of the instance
     def self.get_chef_fqdn(instance_id, config)
       chef = client(config)
-      results = chef.search.query(:node, "ec2_instance_id:#{instance_id} OR chef_provisioning_reference_server_id:#{instance_id}")
+      results = chef.search.query(:node, "instance_id:#{instance_id} OR chef_provisioning_reference_server_id:#{instance_id}")
       return false if results.rows.empty?
       results.rows.first['automatic']['fqdn']
     end
